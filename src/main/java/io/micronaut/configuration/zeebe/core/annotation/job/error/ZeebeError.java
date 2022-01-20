@@ -1,0 +1,22 @@
+package io.micronaut.configuration.zeebe.core.annotation.job.error;
+
+import java.lang.annotation.*;
+
+import static java.lang.annotation.ElementType.*;
+
+/**
+ * @author Gromov Vitaly.
+ * @since 1.0.0
+ */
+@Target({ METHOD, TYPE, ANNOTATION_TYPE })
+@Retention(RetentionPolicy.RUNTIME)
+@Repeatable(ZeebeErrors.class)
+@Inherited
+public @interface ZeebeError {
+
+    String code();
+
+    Class<? extends Throwable>[] throwable();
+
+    String documentation() default "";
+}
