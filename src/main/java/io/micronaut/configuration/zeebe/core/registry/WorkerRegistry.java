@@ -18,7 +18,8 @@ public interface WorkerRegistry {
     /**
      * Register a worker/
      *
-     * @param beanDefinition Bean Definition of the class that was annotated with the ZeebeWorker annotation
+     * @param beanDefinition Bean Definition of the class that was annotated with
+     *                       the ZeebeWorker annotation
      * @param method         Definition of worker class method
      * @see io.micronaut.configuration.zeebe.core.annotation.job.ZeebeWorker
      */

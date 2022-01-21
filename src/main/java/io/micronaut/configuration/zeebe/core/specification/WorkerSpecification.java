@@ -3,7 +3,8 @@ package io.micronaut.configuration.zeebe.core.specification;
 import java.util.List;
 
 /**
- * Worker specification that can be useful for public API about workers of service
+ * Worker specification that can be useful for public API about workers of
+ * service
  *
  * @author Gromov Vitaly.
  * @since 1.0.0
