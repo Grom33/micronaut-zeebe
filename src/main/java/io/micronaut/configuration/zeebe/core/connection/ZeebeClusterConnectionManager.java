@@ -33,8 +33,8 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 /**
- * Manages the connection state of the cluster. Can connect or disconnect to a Zeebe broker
- * on an event dispatched via a ApplicationEventPublisher.
+ * Manages the connection state of the cluster. Can connect or disconnect to a
+ * Zeebe broker on an event dispatched via a ApplicationEventPublisher.
  *
  * @author Gromov Vitaly.
  * @since 1.0.0
