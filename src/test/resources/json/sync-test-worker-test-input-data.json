@@ -1,0 +1,13 @@
+{
+  "value10": "test-value-10",
+  "test-input": {
+    "x": {
+      "y": {
+        "value1": "test-value1",
+        "value2": "test-value2"
+      }
+    }
+  },
+  "value1": "root-value1",
+  "value2": "root-value2"
+}

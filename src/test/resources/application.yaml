@@ -1,0 +1,6 @@
+zeebe:
+  schema:
+    enbled: true
+    classpath-folders: bpmn
+    schemas:
+      - test-worker.cloud-bpmn
