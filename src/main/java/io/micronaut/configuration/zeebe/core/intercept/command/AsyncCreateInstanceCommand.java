@@ -38,6 +38,7 @@ public class AsyncCreateInstanceCommand implements Command<ZeebeStartAsyncProces
     private static final Logger logger = LoggerFactory.getLogger(AsyncCreateInstanceCommand.class);
     public static final String VARIABLES = "variables";
     public static final String BPMN_PROCESS_ID = "bpmnProcessId";
+    public static final String VERSION = "version";
     private final ZeebeClusterConnectionManager connectionManager;
 
     @Inject
@@ -59,7 +60,7 @@ public class AsyncCreateInstanceCommand implements Command<ZeebeStartAsyncProces
         for (int i = 0; i < arguments.length; i++) {
             if (arguments[i].getName().equals(BPMN_PROCESS_ID))
                 bpmnProcessId = (String) parameterValues[i];
-            if (arguments[i].getName().equals(BPMN_PROCESS_ID))
+            if (arguments[i].getName().equals(VERSION))
                 version = (int) parameterValues[i];
             if (arguments[i].getName().equals(VARIABLES))
                 variables = (Map<String, Object>) parameterValues[i];
