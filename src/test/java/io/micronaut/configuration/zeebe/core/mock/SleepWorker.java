@@ -7,6 +7,7 @@ import jakarta.inject.Singleton;
  * @author : Vitaly Gromov
  * @since : 1.0.0
  **/
+@SuppressWarnings("java:S2925")
 @Singleton
 public class SleepWorker {
 
