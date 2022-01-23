@@ -186,7 +186,7 @@ public class ZeebeWorkerRegistry implements WorkerRegistry {
             return Optional.empty();
 
         final WorkerConfiguration workerConfiguration = new WorkerConfiguration();
-
+        workerConfiguration.setEnabled(true);
         final String type = annotation.stringValue(TYPE)
                 .filter(StringUtils::isNotEmpty)
                 .orElseGet(beanDefinition::getName);
@@ -228,7 +228,7 @@ public class ZeebeWorkerRegistry implements WorkerRegistry {
 
         final String outputVariableName = annotation.stringValue(OUTPUT_VARIABLE_NAME)
                 .filter(StringUtils::isNotEmpty)
-                .orElseGet(() -> beanDefinition.getName() + "_" + method.getName());
+                .orElseGet(() -> beanDefinition.getBeanType().getSimpleName() + "_" + method.getName());
         workerConfiguration.setOutputVariableName(outputVariableName);
 
         final boolean autoComplete = annotation.booleanValue(AUTO_COMPLETE)
@@ -275,11 +275,14 @@ public class ZeebeWorkerRegistry implements WorkerRegistry {
     @Override
     public boolean stopWorker(String type) {
         try {
-            JobWorker jobWorker = activeWorkers.get(type);
-            if (jobWorker == null)
+            final JobWorker activeJobWorker = activeWorkers.get(type);
+            if (activeJobWorker == null) {
                 return true;
-            if (jobWorker.isOpen())
-                jobWorker.close();
+            }
+            final WorkerConfiguration workerConfiguration = workerConfigurations.get(type);
+            if (activeJobWorker.isOpen())
+                activeJobWorker.close();
+            workerConfiguration.setEnabled(false);
             activeWorkers.remove(type);
             return true;
         } catch (Exception e) {
@@ -299,6 +302,7 @@ public class ZeebeWorkerRegistry implements WorkerRegistry {
             logger.error("resumeWorker() >> Worker with name: {} isn't define!", type);
             return false;
         }
+        workerConfiguration.setEnabled(true);
         openWorker(workerConfiguration);
         return true;
     }

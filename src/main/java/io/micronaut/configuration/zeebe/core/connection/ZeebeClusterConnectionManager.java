@@ -262,6 +262,8 @@ public class ZeebeClusterConnectionManager implements AutoCloseable, Toggleable 
                     this.zeebeClient = null;
                     zeeClient.close();
                 });
+        this.health = getHealthResult(null);
+        lostConnection();
     }
 
     @Override
