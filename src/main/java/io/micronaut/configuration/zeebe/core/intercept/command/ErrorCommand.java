@@ -11,8 +11,6 @@ import io.micronaut.core.type.Argument;
 import io.micronaut.core.util.StringUtils;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -33,7 +31,6 @@ import java.util.concurrent.CompletableFuture;
 @Singleton
 public class ErrorCommand implements Command<ZeebeThrowError> {
 
-    private static final Logger logger = LoggerFactory.getLogger(ErrorCommand.class);
     public static final String JOB_KEY = "jobKey";
     public static final String ERROR_MSG = "errorMsg";
     public static final String ERROR_CODE = "errorCode";

@@ -295,9 +295,10 @@ public class ZeebeWorkerRegistry implements WorkerRegistry {
             return true;
 
         final WorkerConfiguration workerConfiguration = workerConfigurations.get(type);
-        if (workerConfiguration == null)
-            throw new IllegalArgumentException(
-                    String.format("Worker with name: %s isn't define!", type));
+        if (workerConfiguration == null) {
+            logger.error("resumeWorker() >> Worker with name: {} isn't define!", type);
+            return false;
+        }
         openWorker(workerConfiguration);
         return true;
     }

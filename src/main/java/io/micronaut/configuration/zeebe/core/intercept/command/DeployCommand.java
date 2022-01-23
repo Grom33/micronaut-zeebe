@@ -105,6 +105,8 @@ public class DeployCommand implements Command<ZeebeProcessDeploy> {
                 case CHARSET:
                     charset = (Charset) parameterValues[i];
                     break;
+                default:
+                    logger.debug("invoke() >> unknown argument: {} for deploy command.", arguments[i].getName());
             }
         }
         if (Objects.nonNull(resourceBytes) && StringUtils.isNotEmpty(resourceName))

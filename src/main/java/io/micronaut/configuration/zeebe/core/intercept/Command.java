@@ -13,6 +13,7 @@ import java.util.concurrent.CompletableFuture;
 
 public interface Command<T extends Annotation> {
 
+    @SuppressWarnings("java:S1452")
     CompletableFuture<?> invoke(MethodInvocationContext<Object, Object> context);
 
     default Class<T> getAnnotationClass() {
