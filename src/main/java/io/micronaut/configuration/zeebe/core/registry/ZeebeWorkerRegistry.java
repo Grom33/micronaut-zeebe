@@ -239,24 +239,25 @@ public class ZeebeWorkerRegistry implements WorkerRegistry {
     }
 
     private List<String> getFetchVariableNames(ExecutableMethod<?, ?> method) {
-        final List<String> explicitNames = List.of(method.getAnnotation(ZeebeWorker.class)
-                .stringValues("fetchVariables"));
+        final List<String> variablesNames = new ArrayList<>();
 
-        final List<String> byVariableAnnotations = Arrays.stream(method.getArguments())
+        Optional.ofNullable(method.getAnnotation(ZeebeWorker.class))
+                .ifPresent(annotation -> variablesNames.addAll(List.of(annotation
+                        .stringValues("fetchVariables"))));
+
+        Arrays.stream(method.getArguments())
                 .filter(argument -> argument.isAnnotationPresent(ZeebeContextVariable.class))
                 .map(argument -> argument.getAnnotationMetadata()
                         .stringValue(ZeebeContextVariable.class)
                         .orElse(argument.getName()))
-                .collect(Collectors.toList());
+                .forEach(variablesNames::add);
 
-        final List<String> implicitNames = Arrays.stream(method.getArguments())
+        Arrays.stream(method.getArguments())
                 .filter(argument -> argument.isAnnotationPresent(ZeebeContextMapper.class))
                 .flatMap(this::extractVariablesForMapper)
-                .collect(Collectors.toList());
+                .forEach(variablesNames::add);
 
-        return Stream.of(explicitNames, byVariableAnnotations, implicitNames)
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
+        return variablesNames;
     }
 
     private Stream<String> extractVariablesForMapper(Argument<?> argument) {

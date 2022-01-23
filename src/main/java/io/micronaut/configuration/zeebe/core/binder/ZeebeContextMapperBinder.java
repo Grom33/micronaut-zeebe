@@ -11,7 +11,6 @@ import io.micronaut.core.util.StringUtils;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -49,7 +48,7 @@ public class ZeebeContextMapperBinder<T> implements AnnotatedJobBinder<ZeebeCont
                 .orElse("");
 
         if (StringUtils.isNotEmpty(path)) {
-            Optional<Object> rawExtractedValue = extractVariableFromMap(path, source.getVariablesAsMap());
+            Optional<Object> rawExtractedValue = recursive(path, source.getVariablesAsMap());
             if (rawExtractedValue.isEmpty() && !context.getArgument().isNullable())
                 throw new UnsatisfiedArgumentException(context.getArgument());
             if (rawExtractedValue.isEmpty())
@@ -74,31 +73,19 @@ public class ZeebeContextMapperBinder<T> implements AnnotatedJobBinder<ZeebeCont
      * @param source Map of business process context
      * @return extracted object
      */
-    private Optional<Object> extractVariableFromMap(final String path, final Map<String, Object> source) {
-        if (isEmpty(path) || Objects.isNull(source) || source.size() == 0)
+    private Optional<Object> recursive(final String path, final Map<String, ?> source) {
+        if (isEmpty(path) || Objects.isNull(source) || source.isEmpty())
             return Optional.empty();
-        Object result = null;
         if (path.contains(".")) {
-            final List<String> pathKeys = StringUtils.splitOmitEmptyStringsList(path, '.');
-            Map point = source;
-            for (int i = 0, pathKeysSize = pathKeys.size(); i < pathKeysSize; i++) {
-                final String pathKey = pathKeys.get(i);
-                if (!point.containsKey(pathKey) || point.get(pathKey) == null)
-                    return Optional.empty();
-                final Object currentValue = point.get(pathKey);
-                if (i == pathKeysSize - 1) {
-                    result = currentValue;
-                } else {
-                    if (currentValue instanceof Map) {
-                        point = (Map) currentValue;
-                    } else {
-                        return Optional.empty();
-                    }
-                }
-            }
-        } else {
-            result = source.get(path);
-        }
-        return Optional.ofNullable(result);
+            final String key = StringUtils.splitOmitEmptyStringsList(path, '.').get(0);
+            final String subPath = path.substring(key.length() + 1);
+            final Object subMap = source.get(key);
+            if (subMap instanceof Map) {
+                return recursive(subPath, (Map<String, ?>) subMap);
+            } else
+                return Optional.empty();
+        } else
+            return Optional.ofNullable(source.get(path));
     }
+
 }

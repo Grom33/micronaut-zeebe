@@ -51,6 +51,7 @@ public class DeployCommand implements Command<ZeebeProcessDeploy> {
     public static final String RESOURCE_STREAM = "resourceStream";
     public static final String RESOURCE_STRING = "resourceString";
     public static final String CHARSET = "charset";
+    public static final String BROKER_UNUVALIABLE_MESSAGE = "Can't start process, zeebe broker isn't available!";
     private final ZeebeClusterConnectionManager connectionManager;
     private final ZeebeConfiguration configuration;
     private final ExecutorService executorService;
@@ -79,22 +80,32 @@ public class DeployCommand implements Command<ZeebeProcessDeploy> {
         Charset charset = null;
 
         for (int i = 0; i < arguments.length; i++) {
-            if (arguments[i].getName().equals(RESOURCE_BYTES))
-                resourceBytes = (byte[]) parameterValues[i];
-            if (arguments[i].getName().equals(RESOURCE_NAME))
-                resourceName = (String) parameterValues[i];
-            if (arguments[i].getName().equals(PROCESS_DEFINITION))
-                processDefinition = (BpmnModelInstance) parameterValues[i];
-            if (arguments[i].getName().equals(FILENAME))
-                filename = (String) parameterValues[i];
-            if (arguments[i].getName().equals(CLASSPATH_RESOURCE))
-                classpathResource = (String) parameterValues[i];
-            if (arguments[i].getName().equals(RESOURCE_STREAM))
-                resourceStream = (InputStream) parameterValues[i];
-            if (arguments[i].getName().equals(RESOURCE_STRING))
-                resourceString = (String) parameterValues[i];
-            if (arguments[i].getName().equals(CHARSET))
-                charset = (Charset) parameterValues[i];
+            switch (arguments[i].getName()) {
+                case RESOURCE_BYTES:
+                    resourceBytes = (byte[]) parameterValues[i];
+                    break;
+                case RESOURCE_NAME:
+                    resourceName = (String) parameterValues[i];
+                    break;
+                case PROCESS_DEFINITION:
+                    processDefinition = (BpmnModelInstance) parameterValues[i];
+                    break;
+                case FILENAME:
+                    filename = (String) parameterValues[i];
+                    break;
+                case CLASSPATH_RESOURCE:
+                    classpathResource = (String) parameterValues[i];
+                    break;
+                case RESOURCE_STREAM:
+                    resourceStream = (InputStream) parameterValues[i];
+                    break;
+                case RESOURCE_STRING:
+                    resourceString = (String) parameterValues[i];
+                    break;
+                case CHARSET:
+                    charset = (Charset) parameterValues[i];
+                    break;
+            }
         }
         if (Objects.nonNull(resourceBytes) && StringUtils.isNotEmpty(resourceName))
             return deployByBytesArray(resourceBytes, resourceName);
@@ -124,7 +135,7 @@ public class DeployCommand implements Command<ZeebeProcessDeploy> {
     private CompletableFuture<DeploymentEvent> deployByBytesArray(byte[] resourceBytes, String resourceName) {
         final Optional<ZeebeClient> client = connectionManager.getClient();
         if (client.isEmpty())
-            throw new IllegalStateException("Can't start process, zeebe broker isn't available!");
+            throw new IllegalStateException(BROKER_UNUVALIABLE_MESSAGE);
         return client.get().newDeployCommand().addResourceBytes(resourceBytes, resourceName).send().toCompletableFuture();
     }
 
@@ -139,7 +150,7 @@ public class DeployCommand implements Command<ZeebeProcessDeploy> {
     private CompletableFuture<DeploymentEvent> deployByProcessDefinition(BpmnModelInstance processDefinition, String resourceName) {
         final Optional<ZeebeClient> client = connectionManager.getClient();
         if (client.isEmpty())
-            throw new IllegalStateException("Can't start process, zeebe broker isn't available!");
+            throw new IllegalStateException(BROKER_UNUVALIABLE_MESSAGE);
         return client.get().newDeployCommand().addProcessModel(processDefinition, resourceName)
                 .send().toCompletableFuture();
     }
@@ -154,7 +165,7 @@ public class DeployCommand implements Command<ZeebeProcessDeploy> {
     private CompletableFuture<DeploymentEvent> deployByFileName(String filename) {
         final Optional<ZeebeClient> client = connectionManager.getClient();
         if (client.isEmpty())
-            throw new IllegalStateException("Can't start process, zeebe broker isn't available!");
+            throw new IllegalStateException(BROKER_UNUVALIABLE_MESSAGE);
         return client.get().newDeployCommand()
                 .addResourceFile(filename).send().toCompletableFuture();
     }
@@ -169,7 +180,7 @@ public class DeployCommand implements Command<ZeebeProcessDeploy> {
     private CompletableFuture<DeploymentEvent> deployByClassPath(String classpathResource) {
         final Optional<ZeebeClient> client = connectionManager.getClient();
         if (client.isEmpty())
-            throw new IllegalStateException("Can't start process, zeebe broker isn't available!");
+            throw new IllegalStateException(BROKER_UNUVALIABLE_MESSAGE);
         return client.get().newDeployCommand()
                 .addResourceFromClasspath(classpathResource)
                 .send()
@@ -186,7 +197,7 @@ public class DeployCommand implements Command<ZeebeProcessDeploy> {
     private CompletableFuture<DeploymentEvent> deployByResourceStream(InputStream resourceStream, String resourceName) {
         final Optional<ZeebeClient> client = connectionManager.getClient();
         if (client.isEmpty())
-            throw new IllegalStateException("Can't start process, zeebe broker isn't available!");
+            throw new IllegalStateException(BROKER_UNUVALIABLE_MESSAGE);
         return client.get().newDeployCommand().addResourceStream(resourceStream, resourceName)
                 .send().toCompletableFuture();
     }
@@ -202,7 +213,7 @@ public class DeployCommand implements Command<ZeebeProcessDeploy> {
     private CompletableFuture<DeploymentEvent> deployByResourceString(String resourceString, Charset charset, String resourceName) {
         final Optional<ZeebeClient> client = connectionManager.getClient();
         if (client.isEmpty())
-            throw new IllegalStateException("Can't start process, zeebe broker isn't available!");
+            throw new IllegalStateException(BROKER_UNUVALIABLE_MESSAGE);
         return client.get().newDeployCommand().addResourceString(resourceString, charset, resourceName)
                 .send().toCompletableFuture();
     }
@@ -217,7 +228,7 @@ public class DeployCommand implements Command<ZeebeProcessDeploy> {
     private CompletableFuture<DeploymentEvent> deployByResourceStringUtf8(String resourceString, String resourceName) {
         final Optional<ZeebeClient> client = connectionManager.getClient();
         if (client.isEmpty())
-            throw new IllegalStateException("Can't start process, zeebe broker isn't available!");
+            throw new IllegalStateException(BROKER_UNUVALIABLE_MESSAGE);
         return client.get().newDeployCommand().addResourceStringUtf8(resourceString, resourceName)
                 .send().toCompletableFuture();
     }
