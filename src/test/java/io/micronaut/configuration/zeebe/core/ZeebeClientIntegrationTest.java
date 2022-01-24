@@ -23,7 +23,7 @@ import static org.awaitility.Awaitility.await;
 
 @MicronautTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class ZeebeClientIntegrationTest extends ZeebeStarter implements TestPropertyProvider {
+class ZeebeClientIntegrationTest extends ZeebeStarter implements TestPropertyProvider {
 
     public static final String ROOT_VALUE_1 = "root-value1";
     public static final String ROOT_VALUE_2 = "root-value2";

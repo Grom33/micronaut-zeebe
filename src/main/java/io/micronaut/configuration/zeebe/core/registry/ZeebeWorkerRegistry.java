@@ -186,7 +186,7 @@ public class ZeebeWorkerRegistry implements WorkerRegistry {
             return Optional.empty();
 
         final WorkerConfiguration workerConfiguration = new WorkerConfiguration();
-
+        workerConfiguration.setEnabled(true);
         final String type = annotation.stringValue(TYPE)
                 .filter(StringUtils::isNotEmpty)
                 .orElseGet(beanDefinition::getName);
@@ -228,7 +228,7 @@ public class ZeebeWorkerRegistry implements WorkerRegistry {
 
         final String outputVariableName = annotation.stringValue(OUTPUT_VARIABLE_NAME)
                 .filter(StringUtils::isNotEmpty)
-                .orElseGet(() -> beanDefinition.getName() + "_" + method.getName());
+                .orElseGet(() -> beanDefinition.getBeanType().getSimpleName() + "_" + method.getName());
         workerConfiguration.setOutputVariableName(outputVariableName);
 
         final boolean autoComplete = annotation.booleanValue(AUTO_COMPLETE)
@@ -239,24 +239,25 @@ public class ZeebeWorkerRegistry implements WorkerRegistry {
     }
 
     private List<String> getFetchVariableNames(ExecutableMethod<?, ?> method) {
-        final List<String> explicitNames = List.of(method.getAnnotation(ZeebeWorker.class)
-                .stringValues("fetchVariables"));
+        final List<String> variablesNames = new ArrayList<>();
 
-        final List<String> byVariableAnnotations = Arrays.stream(method.getArguments())
+        Optional.ofNullable(method.getAnnotation(ZeebeWorker.class))
+                .ifPresent(annotation -> variablesNames.addAll(List.of(annotation
+                        .stringValues("fetchVariables"))));
+
+        Arrays.stream(method.getArguments())
                 .filter(argument -> argument.isAnnotationPresent(ZeebeContextVariable.class))
                 .map(argument -> argument.getAnnotationMetadata()
                         .stringValue(ZeebeContextVariable.class)
                         .orElse(argument.getName()))
-                .collect(Collectors.toList());
+                .forEach(variablesNames::add);
 
-        final List<String> implicitNames = Arrays.stream(method.getArguments())
+        Arrays.stream(method.getArguments())
                 .filter(argument -> argument.isAnnotationPresent(ZeebeContextMapper.class))
                 .flatMap(this::extractVariablesForMapper)
-                .collect(Collectors.toList());
+                .forEach(variablesNames::add);
 
-        return Stream.of(explicitNames, byVariableAnnotations, implicitNames)
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
+        return variablesNames;
     }
 
     private Stream<String> extractVariablesForMapper(Argument<?> argument) {
@@ -274,11 +275,14 @@ public class ZeebeWorkerRegistry implements WorkerRegistry {
     @Override
     public boolean stopWorker(String type) {
         try {
-            JobWorker jobWorker = activeWorkers.get(type);
-            if (jobWorker == null)
+            final JobWorker activeJobWorker = activeWorkers.get(type);
+            if (activeJobWorker == null) {
                 return true;
-            if (jobWorker.isOpen())
-                jobWorker.close();
+            }
+            final WorkerConfiguration workerConfiguration = workerConfigurations.get(type);
+            if (activeJobWorker.isOpen())
+                activeJobWorker.close();
+            workerConfiguration.setEnabled(false);
             activeWorkers.remove(type);
             return true;
         } catch (Exception e) {
@@ -294,9 +298,11 @@ public class ZeebeWorkerRegistry implements WorkerRegistry {
             return true;
 
         final WorkerConfiguration workerConfiguration = workerConfigurations.get(type);
-        if (workerConfiguration == null)
-            throw new IllegalArgumentException(
-                    String.format("Worker with name: %s isn't define!", type));
+        if (workerConfiguration == null) {
+            logger.error("resumeWorker() >> Worker with name: {} isn't define!", type);
+            return false;
+        }
+        workerConfiguration.setEnabled(true);
         openWorker(workerConfiguration);
         return true;
     }

@@ -54,7 +54,7 @@ public class AsyncCreateInstanceCommand implements Command<ZeebeStartAsyncProces
         final Object[] parameterValues = context.getParameterValues();
         String bpmnProcessId = (String) context.getValue(ZeebeStartAsyncProcess.class, "value")
                 .orElse("");
-        int version = context.intValue(ZeebeStartAsyncProcess.class, "version")
+        int version = context.intValue(ZeebeStartAsyncProcess.class, VERSION)
                 .orElse(0);
         Map<String, Object> variables = null;
         for (int i = 0; i < arguments.length; i++) {

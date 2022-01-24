@@ -52,7 +52,7 @@ public class ZeebeClusterConnectionManager implements AutoCloseable, Toggleable 
     private final ZeebeConfiguration configuration;
     private ZeebeClient zeebeClient;
     protected HealthResult health;
-    volatile private boolean connectionEnabled;
+    private volatile boolean connectionEnabled;
     private final ReentrantLock lock = new ReentrantLock();
 
     @Inject
@@ -129,8 +129,8 @@ public class ZeebeClusterConnectionManager implements AutoCloseable, Toggleable 
             configuration.getNumJobWorkerExecutionThreads().ifPresent(zeebeClientBuilder::numJobWorkerExecutionThreads);
             configuration.getKeepAlive().ifPresent(keepAlive -> zeebeClientBuilder.keepAlive(Duration.parse(keepAlive)));
             configuration.getCaCertificatePath().ifPresent(zeebeClientBuilder::caCertificatePath);
-            ZeebeClient zeebeClient = zeebeClientBuilder.build();
-            return Optional.of(zeebeClient);
+            ZeebeClient zeeClient = zeebeClientBuilder.build();
+            return Optional.of(zeeClient);
         } catch (Exception e) {
             logger.error("getConnectionClient() >> Failed build client, because: {}", e.getMessage());
         }
@@ -205,7 +205,7 @@ public class ZeebeClusterConnectionManager implements AutoCloseable, Toggleable 
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
 
-        if (failedPartitions.size() > 0) {
+        if (!failedPartitions.isEmpty()) {
             final String partitions = failedPartitions.stream().map(Object::toString)
                     .collect(Collectors.joining(", "));
             logger.error(
@@ -258,10 +258,12 @@ public class ZeebeClusterConnectionManager implements AutoCloseable, Toggleable 
     @Override
     public void close() {
         Optional.ofNullable(this.zeebeClient)
-                .ifPresent(zeebeClient -> {
+                .ifPresent(zeeClient -> {
                     this.zeebeClient = null;
-                    zeebeClient.close();
+                    zeeClient.close();
                 });
+        this.health = getHealthResult(null);
+        lostConnection();
     }
 
     @Override
