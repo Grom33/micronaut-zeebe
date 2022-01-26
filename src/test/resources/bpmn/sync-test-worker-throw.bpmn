@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0es9sk5" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.8.1" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="1.0.0">
+  <bpmn:process id="syncTestWorkerThrow" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_1pbzbns</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_1pbzbns" sourceRef="StartEvent_1" targetRef="Activity_15vep11" />
+    <bpmn:endEvent id="Event_0hg4d5u">
+      <bpmn:incoming>Flow_1b709hp</bpmn:incoming>
+      <bpmn:incoming>Flow_1j7gt78</bpmn:incoming>
+      <bpmn:incoming>Flow_06iso8w</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1b709hp" sourceRef="Activity_15vep11" targetRef="Event_0hg4d5u" />
+    <bpmn:serviceTask id="Activity_15vep11" name="sync-throw-worker">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="sync-throw-worker" />
+        <zeebe:ioMapping>
+          <zeebe:input source="= true" target="trigger" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1pbzbns</bpmn:incoming>
+      <bpmn:outgoing>Flow_1b709hp</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:boundaryEvent id="Event_1sasv1s" attachedToRef="Activity_15vep11">
+      <bpmn:outgoing>Flow_1swav2k</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_19k4ecg" errorRef="Error_1vlq0il" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_1swav2k" sourceRef="Event_1sasv1s" targetRef="Activity_05l5s0e" />
+    <bpmn:serviceTask id="Activity_05l5s0e" name="sync-throw-worker">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="sync-throw-worker" />
+        <zeebe:ioMapping>
+          <zeebe:input source="= false" target="trigger" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1swav2k</bpmn:incoming>
+      <bpmn:outgoing>Flow_06iso8w</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0tlbwvd" sourceRef="Event_02cg41k" targetRef="Activity_01yzmdk" />
+    <bpmn:sequenceFlow id="Flow_1j7gt78" sourceRef="Activity_01yzmdk" targetRef="Event_0hg4d5u" />
+    <bpmn:sequenceFlow id="Flow_06iso8w" sourceRef="Activity_05l5s0e" targetRef="Event_0hg4d5u" />
+    <bpmn:boundaryEvent id="Event_02cg41k" attachedToRef="Activity_05l5s0e">
+      <bpmn:outgoing>Flow_0tlbwvd</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_193kgez" errorRef="Error_0irmko0" />
+    </bpmn:boundaryEvent>
+    <bpmn:serviceTask id="Activity_01yzmdk" name="sync-throw-worker">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="sync-throw-worker" />
+        <zeebe:ioMapping>
+          <zeebe:input source="= &#34;keepCalm&#34;" target="keepCalm" />
+          <zeebe:output source="= &#34;throwResult22&#34;" target="throwResult" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0tlbwvd</bpmn:incoming>
+      <bpmn:outgoing>Flow_1j7gt78</bpmn:outgoing>
+    </bpmn:serviceTask>
+  </bpmn:process>
+  <bpmn:error id="Error_1vlq0il" name="exception11" errorCode="11" />
+  <bpmn:error id="Error_0irmko0" name="Exception22" errorCode="22" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="syncTestWorkerThrow">
+      <bpmndi:BPMNEdge id="Flow_1b709hp_di" bpmnElement="Flow_1b709hp">
+        <di:waypoint x="370" y="117" />
+        <di:waypoint x="680" y="117" />
+        <di:waypoint x="680" y="222" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1pbzbns_di" bpmnElement="Flow_1pbzbns">
+        <di:waypoint x="215" y="117" />
+        <di:waypoint x="270" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1swav2k_di" bpmnElement="Flow_1swav2k">
+        <di:waypoint x="320" y="175" />
+        <di:waypoint x="320" y="240" />
+        <di:waypoint x="400" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0tlbwvd_di" bpmnElement="Flow_0tlbwvd">
+        <di:waypoint x="460" y="298" />
+        <di:waypoint x="460" y="360" />
+        <di:waypoint x="530" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1j7gt78_di" bpmnElement="Flow_1j7gt78">
+        <di:waypoint x="630" y="360" />
+        <di:waypoint x="680" y="360" />
+        <di:waypoint x="680" y="258" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_06iso8w_di" bpmnElement="Flow_06iso8w">
+        <di:waypoint x="500" y="240" />
+        <di:waypoint x="662" y="240" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_04duwpy_di" bpmnElement="Activity_15vep11">
+        <dc:Bounds x="270" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0961hso_di" bpmnElement="Activity_05l5s0e">
+        <dc:Bounds x="400" y="200" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0hg4d5u_di" bpmnElement="Event_0hg4d5u">
+        <dc:Bounds x="662" y="222" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0a96jsf_di" bpmnElement="Activity_01yzmdk">
+        <dc:Bounds x="530" y="320" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1ky9rgw_di" bpmnElement="Event_1sasv1s">
+        <dc:Bounds x="302" y="139" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_103rlcs_di" bpmnElement="Event_02cg41k">
+        <dc:Bounds x="442" y="262" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -1,0 +1,14 @@
+zeebe:
+  health:
+    enabled: true
+  schema:
+    enbled: true
+    classpath-folders: bpmn
+    schemas:
+      - test-worker.cloud-bpmn
+
+endpoints:
+  health:
+    enabled: true
+    sensitive: false
+    details-visible: ANONYMOUS # show details for everyone
