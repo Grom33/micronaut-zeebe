@@ -1,4 +1,5 @@
 # micronaut-zeebe
+
 Integration between Micronaut and Zeebe
 
 ## Introduction
@@ -11,6 +12,12 @@ To add support for zeebe to an existing project, you should first add the Micron
 dependencies {
     compile 'com.github.grom33:micronaut-zeebe:1.0.0'
 }
+```
+and you configure application.yaml 
+```yaml
+zeebe:
+  enabled: true
+  gateway-address: localhost:26500
 ```
 ## Zeebe worker
 
@@ -339,6 +346,29 @@ zeebe:
     enabled: true
 ```
 ## Connection management
+Other configuration can be also specified, for self-hosted broker:
+```yaml
+zeebe:
+  enabled: true
+  gateway-address: localhost:26500 ## the gateway address to which the client should connect
+  default-request-timeout: PT20S ## the default request timeout as ISO 8601 standard formatted String e.g. PT20S for a timeout of 20 seconds
+  default-job-poll-interval: 100 ## the default job poll interval in milliseconds e.g. 100 for a timeout of 100 milliseconds
+  default-job-timeout: PT5M ## the default job timeout as ISO 8601 standard formatted String e.g. PT5M for a timeout of 5 minutes
+  default-message-time-to-live: PT1H ## the default message time to live as ISO 8601 standard formatted String e.g. PT1H for a timeout of 1 hour
+  default-job-worker-name: simple ## the default job worker name
+  num-job-worker-execution-threads: 8 ## the number of threads used to execute workers
+  keep-alive: PT45S ## the interval for keep allive messages to be sent as ISO 8601 standard formatted String e.g. PT45S for 45 seconds
+  ca-certificate-path: path ## the path to a ca certificate
+```
+and cloud broker:
+```yaml
+zeebe:
+  .....
+  cluster-id: CLOUDID ## The clusterId when connecting to Camunda Cloud. Don't set this for a local Zeebe Broker.
+  client-id: CLIENTID ## The clientId to connect to Camunda Cloud. Don't set this for a local Zeebe Broker.
+  client-secret: SECRET ## The clientSecret to connect to Camunda Cloud. Don't set this for a local Zeebe Broker.
+```
+
 the module constantly monitors the status of the connection to the cluster, including its status. 
 In the case of a non-consistent state of the broker, or problems with the connection, the library 
 disables the workers, and in case of restoration of the broker's functionality, it connects the 
@@ -360,3 +390,7 @@ to the micronaut bus.
 ```java
 applicationEventPublisher.publishEvent(new ZeebeConnectionSignal(true))
 ```
+
+## License
+
+This project licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
