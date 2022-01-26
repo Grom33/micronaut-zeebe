@@ -85,6 +85,7 @@ publishing {
     }
 }
 
+check.dependsOn jacocoTestReport
 jacocoTestReport {
     reports {
         xml.enabled true
@@ -117,4 +118,57 @@ sonarqube {
         property "sonar.host.url", "https://sonarcloud.io"
     }
 }
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            pom {
+                name = "Micronaut Zeebe Configuration"
+                url = "https://github.com/Grom33/micronaut-zeebe"
+                description = "This is integration between Micronaut and Zeebe."
+
+                license {
+                    name = "Apache License 2.0"
+                    url = "https://github.com/Grom33/micronaut-zeebe/blob/master/LICENSE"
+                    distribution = "repo"
+                }
+
+                developer {
+                    id = "Grom33"
+                    name = "Vitaly Gromov"
+                    email = "mr.gromov.vitaly@gmail.com"
+                    url = "https://github.com/Grom33"
+                }
+
+                scm {
+                    connection = "scm:git:git://github.com/Grom33/micronaut-zeebe.git"
+                    developerConnection = "scm:git:ssh://Grom33/micronaut-zeebe.git"
+                    url = "https://github.com/Grom33/micronaut-zeebe/tree/master"
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+            def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+            url = version.endsWith("SNAPSHOT") ? snapshotsRepoUrl : releasesRepoUrl
+            credentials {
+                username System.getenv("OSS_USERNAME")
+                password System.getenv("OSS_PASSWORD")
+            }
+        }
+    }
+}
+
+if (project.hasProperty("signing.keyId")) {
+    apply plugin: "signing"
+    signing {
+        sign publishing.publications.mavenJava
+    }
+}
+
 
