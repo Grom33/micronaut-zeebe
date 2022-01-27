@@ -10,7 +10,7 @@ Micronaut features dedicated support for defining zeebe workers and send command
 To add support for zeebe to an existing project, you should first add the Micronaut Zeebe configuration to your build configuration. For example in Gradle:
 ```groovy
 dependencies {
-    compile 'com.github.grom33:micronaut-zeebe:1.0.0'
+    compile 'io.github.grom33:micronaut-zeebe:1.0.0'
 }
 ```
 and you configure application.yaml 
