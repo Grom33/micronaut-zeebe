@@ -1,4 +1,8 @@
 # micronaut-zeebe
+[![Java CI with Gradle](https://github.com/Grom33/micronaut-zeebe/actions/workflows/gradle.yml/badge.svg)](https://github.com/Grom33/micronaut-zeebe/actions/workflows/gradle.yml)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=Grom33_micronaut-zeebe&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=Grom33_micronaut-zeebe)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=Grom33_micronaut-zeebe&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=Grom33_micronaut-zeebe)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Grom33_micronaut-zeebe&metric=coverage)](https://sonarcloud.io/summary/new_code?id=Grom33_micronaut-zeebe)
 
 Integration between Micronaut and Zeebe
 
