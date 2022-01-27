@@ -105,9 +105,9 @@ sonarqube {
 publishing {
     publications {
         mavenJava(MavenPublication) {
+            from components.java
             pom {
                 name = "Micronaut Zeebe Configuration"
-                packaging = "jar"
                 url = "https://github.com/Grom33/micronaut-zeebe"
                 description = "This is integration between Micronaut and Zeebe."
 
